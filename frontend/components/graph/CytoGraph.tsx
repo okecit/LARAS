@@ -107,7 +107,19 @@ export const CytoGraph = forwardRef<CytoHandle, Props>(function CytoGraph(
     });
     cy.on("mouseout", "node", () => cy.elements().removeClass("faded hl"));
     cyRef.current = cy;
+    // Ukuran wadah berubah (jendela/panel diubah) → hitung ulang kanvas & paskan graf.
+    let t: ReturnType<typeof setTimeout> | undefined;
+    const ro = new ResizeObserver(() => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        cy.resize();
+        if (cy.elements().nonempty()) cy.fit(undefined, 30);
+      }, 120);
+    });
+    ro.observe(container.current);
     return () => {
+      clearTimeout(t);
+      ro.disconnect();
       cy.destroy();
       cyRef.current = null;
     };
