@@ -14,6 +14,7 @@ import {
   cn, communityColor, CONTEXT_COLORS, CONTEXT_LABELS, EVIDENCE_COLORS, EVIDENCE_LABELS, fmtNum, INTERACTION_LABELS, PLATFORM_COLORS, PLATFORM_NAMES,
 } from "@/lib/format";
 import { useApp, useFilterParams } from "@/lib/store";
+import { useChartTheme } from "@/lib/theme";
 import type { GEdge, GNode, GraphResponse, MetricKey } from "@/lib/types";
 
 type Layer = "aktor" | "konten" | "bipartit";
@@ -31,6 +32,7 @@ export default function NetworkExplorer() {
   const { meta, filters, can } = useApp();
   const fp = useFilterParams();
   const graphRef = useRef<CytoHandle>(null);
+  const ct = useChartTheme();
   const [layer, setLayer] = useState<Layer>("aktor");
   const [sizeMetric, setSizeMetric] = useState<MetricKey>("pagerank");
   const [colorMode, setColorMode] = useState<ColorMode>("komunitas");
@@ -268,10 +270,10 @@ export default function NetworkExplorer() {
           <div className="h-[132px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={temporal} margin={{ top: 4, right: 4, bottom: 0, left: -24 }}>
-                <CartesianGrid stroke="#1E2A44" vertical={false} />
-                <XAxis dataKey="date" tick={{ fill: "#64748B", fontSize: 10 }} tickFormatter={(d: string) => d.slice(5)} minTickGap={28} />
-                <YAxis tick={{ fill: "#64748B", fontSize: 10 }} />
-                <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #2A3A5C", fontSize: 11 }} />
+                <CartesianGrid stroke={ct.grid} vertical={false} />
+                <XAxis dataKey="date" tick={ct.tick} tickFormatter={(d: string) => d.slice(5)} minTickGap={28} />
+                <YAxis tick={ct.tick} />
+                <Tooltip {...ct.tooltip} />
                 <Area type="monotone" dataKey="interactions" name="Interaksi" stroke="#A78BFA" fill="#A78BFA" fillOpacity={0.15} strokeWidth={1.5} />
                 <Area type="monotone" dataKey="content" name="Konten" stroke="#22D3EE" fill="#22D3EE" fillOpacity={0.12} strokeWidth={1.5} />
                 <Area type="monotone" dataKey="harmful" name="Kandidat berbahaya" stroke="#F87171" fill="none" strokeWidth={1.2} />

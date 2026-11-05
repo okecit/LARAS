@@ -9,6 +9,7 @@ import {
   CONTEXT_COLORS, CONTEXT_LABELS, EVIDENCE_COLORS, EVIDENCE_LABELS, fmtDateTime, fmtHours, fmtNum, PLATFORM_COLORS, PLATFORM_NAMES, RELATION_LABELS,
 } from "@/lib/format";
 import { useApi, useApp } from "@/lib/store";
+import { useTheme } from "@/lib/theme";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const LANES = ["tiktok", "instagram", "x", "youtube", "lainnya"];
@@ -144,6 +145,7 @@ function SumBox({ k, v, sub, accent }: { k: string; v: React.ReactNode; sub?: st
 function Cascade({ data, selected, onSelect }: { data: any; selected: any; onSelect: (s: any) => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const [w, setW] = useState(900);
+  const { palette } = useTheme();
   useEffect(() => {
     if (!ref.current) return;
     const ro = new ResizeObserver((e) => setW(e[0].contentRect.width));
@@ -181,14 +183,14 @@ function Cascade({ data, selected, onSelect }: { data: any; selected: any; onSel
         </defs>
         {lanes.map((l, i) => (
           <g key={l}>
-            <rect x={0} y={top + i * laneH} width={w} height={laneH} fill={i % 2 ? "#0F172A" : "#0B1220"} opacity={0.7} />
-            <text x={10} y={top + i * laneH + laneH / 2 + 4} fill={PLATFORM_COLORS[l]} fontSize={11} fontWeight={600}>{PLATFORM_NAMES[l]}</text>
+            <rect x={0} y={top + i * laneH} width={w} height={laneH} fill={i % 2 ? palette.laneB : palette.laneA} />
+            <text className="tone" x={10} y={top + i * laneH + laneH / 2 + 4} fill={PLATFORM_COLORS[l]} fontSize={11} fontWeight={600}>{PLATFORM_NAMES[l]}</text>
           </g>
         ))}
         {ticks.map((t, i) => (
           <g key={i}>
-            <line x1={x(t)} x2={x(t)} y1={top} y2={H - 24} stroke="#1E2A44" strokeDasharray="2 4" />
-            <text x={x(t)} y={H - 8} fill="#64748B" fontSize={10} textAnchor="middle">{dfmt.format(new Date(t))}</text>
+            <line x1={x(t)} x2={x(t)} y1={top} y2={H - 24} stroke={palette.line} strokeDasharray="2 4" />
+            <text x={x(t)} y={H - 8} fill={palette.dim} fontSize={10} textAnchor="middle">{dfmt.format(new Date(t))}</text>
           </g>
         ))}
         {data.edges.map((e: any) => {
@@ -217,9 +219,9 @@ function Cascade({ data, selected, onSelect }: { data: any; selected: any; onSel
               {n.is_first_observed && <circle cx={p.x} cy={p.y} r={p.r + 6} fill="none" stroke="#FBBF24" strokeDasharray="3 2" />}
               {n.is_transmission_root && <circle cx={p.x} cy={p.y} r={p.r + 5} fill="none" stroke="#2DD4BF" strokeWidth={1.5} />}
               <circle cx={p.x} cy={p.y} r={p.r} fill={CONTEXT_COLORS[n.context_label] || "#64748B"} fillOpacity={0.9}
-                stroke={isSel ? "#fff" : "#0B1220"} strokeWidth={isSel ? 2.5 : 1} />
+                stroke={isSel ? palette.highlight : palette.nodeBorder} strokeWidth={isSel ? 2.5 : 1} />
               {n.content_type !== "komentar" && (
-                <text x={p.x} y={p.y - p.r - 5} fill="#CBD5E1" fontSize={9.5} textAnchor="middle" className="pointer-events-none select-none font-mono">
+                <text x={p.x} y={p.y - p.r - 5} fill={palette.label} fontSize={9.5} textAnchor="middle" className="pointer-events-none select-none font-mono">
                   {n.code.replace(/^[A-Z]+-/, "")}
                 </text>
               )}

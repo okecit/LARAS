@@ -158,7 +158,7 @@ function ReviewQueue() {
                   <Badge color={meta?.categories.find((c) => c.code === r.category)?.color}>{r.category}</Badge>
                   <Badge color={CONTEXT_COLORS[r.context_label]}>{CONTEXT_LABELS[r.context_label]}</Badge>
                   <span className="font-mono text-2xs text-teal">keyakinan {r.confidence.toFixed(2)}</span>
-                  <Badge color="#64748B">{r.model_version}</Badge>
+                  <Badge color="#7A8AA6">{r.model_version}</Badge>
                 </div>
                 <p className="mt-1.5 rounded border border-line bg-bg/50 p-2 leading-relaxed">{r.text}</p>
                 <p className="mt-1 text-2xs text-dim">{r.rationale}</p>
@@ -238,7 +238,7 @@ function TestClassifier() {
               {res.labels.length === 0 ? <Empty>Tidak ada kategori yang terdeteksi.</Empty> : res.labels.map((l: any) => (
                 <div key={l.code} className="rounded-md border border-line bg-bg/40 p-2.5">
                   <div className="flex items-center gap-2">
-                    <Dot color={meta?.categories.find((c) => c.code === l.code)?.color || "#fff"} />
+                    <Dot color={meta?.categories.find((c) => c.code === l.code)?.color || "#94A3B8"} />
                     <span className="font-mono">{l.code}</span><span>{meta?.categories.find((c) => c.code === l.code)?.name}</span>
                     <span className="ml-auto font-mono text-teal">{l.confidence.toFixed(3)}</span>
                   </div>
@@ -273,7 +273,7 @@ function KeywordDiscovery() {
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         {Object.entries(data.suggestions as Record<string, any[]>).map(([code, list]) => (
           <Card key={code}>
-            <CardHeader title={<span className="flex items-center gap-2"><Dot color={meta?.categories.find((c) => c.code === code)?.color || "#fff"} />{code}</span>}
+            <CardHeader title={<span className="flex items-center gap-2"><Dot color={meta?.categories.find((c) => c.code === code)?.color || "#94A3B8"} />{code}</span>}
               subtitle={meta?.categories.find((c) => c.code === code)?.name} />
             <div className="space-y-1 p-3">
               {list.length === 0 && <Empty>Belum ada usulan.</Empty>}

@@ -2,39 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* Palet diturunkan dari logo LARAs: navy #0E2557 · cyan #1EC8E6 · biru #2F6FE0 · ungu #7B3FE4 */
+
+/* ---------- Tema gelap (bawaan) ---------- */
+:root,
+:root[data-theme="dark"] {
   color-scheme: dark;
+  --c-bg: 8 18 42;          /* #08122A navy gelap */
+  --c-panel: 12 26 58;      /* #0C1A3A */
+  --c-panel2: 18 36 77;     /* #12244D */
+  --c-line: 28 49 96;       /* #1C3160 */
+  --c-line2: 43 69 128;     /* #2B4580 */
+  --c-ink: 228 236 250;
+  --c-mute: 152 168 202;
+  --c-dim: 106 124 164;
+  --c-teal: 30 200 230;     /* cyan logo — aksen utama */
+  --c-cyan: 96 165 250;
+  --c-purple: 155 109 246;
+  --c-blue: 79 134 236;
+  --c-amber: 251 191 36;
+  --c-danger: 248 113 113;
+  --grid-dot: rgba(152, 168, 202, 0.1);
+}
+
+/* ---------- Tema terang (putih) ---------- */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --c-bg: 243 246 252;      /* #F3F6FC */
+  --c-panel: 255 255 255;
+  --c-panel2: 234 241 252;
+  --c-line: 220 228 242;
+  --c-line2: 192 205 230;
+  --c-ink: 14 37 87;        /* #0E2557 navy logo */
+  --c-mute: 70 89 130;
+  --c-dim: 110 127 162;
+  --c-teal: 8 141 178;      /* cyan logo, digelapkan agar kontras di putih */
+  --c-cyan: 37 99 235;
+  --c-purple: 109 40 217;
+  --c-blue: 37 99 235;
+  --c-amber: 180 83 9;
+  --c-danger: 220 38 38;
+  --grid-dot: rgba(14, 37, 87, 0.09);
 }
 
 html,
 body {
-  background: #0b1220;
-  color: #e2e8f0;
+  background: rgb(var(--c-bg));
+  color: rgb(var(--c-ink));
   height: 100%;
 }
 
 body {
   font-feature-settings: "cv11", "ss01";
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #2a3a5c transparent;
+  scrollbar-color: rgb(var(--c-line2)) transparent;
 }
-
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 *::-webkit-scrollbar-thumb {
-  background: #2a3a5c;
+  background: rgb(var(--c-line2));
   border-radius: 8px;
 }
 
 .grid-bg {
-  background-color: #0b1220;
-  background-image: radial-gradient(rgba(148, 163, 184, 0.09) 1px, transparent 1px);
+  background-color: rgb(var(--c-bg));
+  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
   background-size: 22px 22px;
 }
 
@@ -42,17 +81,17 @@ body {
   @apply text-2xs font-semibold uppercase tracking-[0.12em] text-dim;
 }
 
-input[type="range"] {
-  accent-color: #2dd4bf;
-}
-
+input[type="range"],
 input[type="checkbox"] {
-  accent-color: #2dd4bf;
+  accent-color: rgb(var(--c-teal));
 }
 
-.recharts-tooltip-wrapper .recharts-default-tooltip {
-  background: #0f172a !important;
-  border: 1px solid #2a3a5c !important;
-  border-radius: 8px;
-  font-size: 12px;
+/* Warna data (kategori, platform, status) dirancang untuk latar gelap.
+   Di tema terang teksnya digelapkan agar tetap terbaca. */
+:root[data-theme="light"] .tone {
+  filter: brightness(0.72) saturate(1.35);
+}
+
+:root[data-theme="light"] .shadow-2xl {
+  box-shadow: 0 20px 40px -12px rgba(14, 37, 87, 0.18);
 }

@@ -11,6 +11,7 @@ import {
   INTERACTION_LABELS, PLATFORM_COLORS, PLATFORM_NAMES, RELATION_LABELS, VALIDATION_LABELS,
 } from "@/lib/format";
 import { useApp } from "@/lib/store";
+import { useChartTheme, useTheme } from "@/lib/theme";
 import type { GNode, MetricKey } from "@/lib/types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -27,6 +28,8 @@ export function NodePanel({ node, sizeMetric, onClose, onExpand, onFocus, onPath
   const [err, setErr] = useState<string | null>(null);
   const [tab, setTab] = useState<"ringkasan" | "terhubung" | "linimasa" | "bukti">("ringkasan");
   const [note, setNote] = useState("");
+  const { palette } = useTheme();
+  const ct = useChartTheme();
 
   const load = () => api<Detail>(`/api/nodes/${node.id}`).then(setD).catch((e) => setErr(e.message));
   useEffect(() => {
@@ -88,7 +91,7 @@ export function NodePanel({ node, sizeMetric, onClose, onExpand, onFocus, onPath
                       <span className="flex items-center gap-1">{meta?.metrics[k]?.label}<Hint text={meta?.metrics[k]?.explanation || ""} /></span>
                       <span className="font-mono">{fmtMetric(node.metrics[k])}</span>
                     </div>
-                    <Bar value={node.metrics[k] ?? 0} max={Math.max(metricMax[k], node.metrics[k] ?? 0)} color={k === sizeMetric ? "#2DD4BF" : "#3B4B6E"} />
+                    <Bar value={node.metrics[k] ?? 0} max={Math.max(metricMax[k], node.metrics[k] ?? 0)} color={k === sizeMetric ? palette.accent : palette.line2} />
                   </div>
                 ))}
               </div>
@@ -136,8 +139,8 @@ export function NodePanel({ node, sizeMetric, onClose, onExpand, onFocus, onPath
               <div className="h-32">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={d.timeline}>
-                    <XAxis dataKey="date" tick={{ fill: "#64748B", fontSize: 9 }} tickFormatter={(x: string) => x.slice(5)} />
-                    <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #2A3A5C", fontSize: 11 }} />
+                    <XAxis dataKey="date" tick={{ ...ct.tick, fontSize: 9 }} tickFormatter={(x: string) => x.slice(5)} />
+                    <Tooltip {...ct.tooltip} />
                     {d.kind === "aktor" && <RBar dataKey="content" name="Konten" fill="#22D3EE" />}
                     <RBar dataKey="interactions" name="Interaksi" fill="#A78BFA" />
                   </BarChart>
@@ -250,7 +253,7 @@ function ContentSummary({ d, catName, canRaw }: { d: Detail; catName: (c: string
         {d.classifications.map((c: any) => (
           <div key={c.id} className="mb-1.5 rounded-md border border-line bg-bg/40 p-2">
             <div className="flex items-center gap-1.5">
-              <Dot color={catName(c.code)?.color || "#fff"} />
+              <Dot color={catName(c.code)?.color || "#94A3B8"} />
               <span className="font-mono text-2xs">{c.code}</span>
               <span className="truncate text-2xs">{c.name}</span>
               <span className="ml-auto font-mono text-2xs text-teal">{c.confidence.toFixed(2)}</span>
@@ -259,7 +262,7 @@ function ContentSummary({ d, catName, canRaw }: { d: Detail; catName: (c: string
               <Badge color={c.validation_status === "valid" ? "#2DD4BF" : c.validation_status === "ditolak" ? "#F87171" : "#94A3B8"}>
                 {VALIDATION_LABELS[c.validation_status]}
               </Badge>
-              <Badge color="#64748B">{c.model_version}</Badge>
+              <Badge color="#7A8AA6">{c.model_version}</Badge>
             </div>
             <p className="mt-1 text-2xs text-dim">{c.rationale}</p>
           </div>

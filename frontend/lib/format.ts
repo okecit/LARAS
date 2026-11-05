@@ -6,20 +6,20 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const COMMUNITY_COLORS = [
-  "#A78BFA", "#FBBF24", "#60A5FA", "#2DD4BF", "#F472B6", "#22D3EE", "#FB923C", "#A3E635",
+  "#9B6DF6", "#F5A524", "#2F6FE0", "#1EC8E6", "#F472B6", "#22D3EE", "#FB923C", "#A3E635",
   "#818CF8", "#F87171", "#34D399", "#E879F9",
 ];
-export const communityColor = (c: number) => (c < 0 ? "#475569" : COMMUNITY_COLORS[c % COMMUNITY_COLORS.length]);
+export const communityColor = (c: number) => (c < 0 ? "#7A8AA6" : COMMUNITY_COLORS[c % COMMUNITY_COLORS.length]);
 
 export const PLATFORM_COLORS: Record<string, string> = {
-  tiktok: "#22D3EE", instagram: "#C084FC", youtube: "#F87171", x: "#E2E8F0", lainnya: "#94A3B8",
+  tiktok: "#22D3EE", instagram: "#C084FC", youtube: "#F87171", x: "#7F8FA9", lainnya: "#94A3B8",
 };
 export const PLATFORM_NAMES: Record<string, string> = {
   tiktok: "TikTok", instagram: "Instagram", youtube: "YouTube", x: "X", lainnya: "Lainnya",
 };
 
 export const EVIDENCE_COLORS: Record<string, string> = {
-  kemiripan: "#64748B",
+  kemiripan: "#7A8AA6",
   kemungkinan_replikasi: "#FBBF24",
   replikasi_didukung: "#FB923C",
   atribusi_terkonfirmasi: "#2DD4BF",
@@ -38,8 +38,8 @@ export const CONTEXT_COLORS: Record<string, string> = {
   edukasi: "#A3E635",
   satire: "#E879F9",
   pencegahan: "#34D399",
-  netral: "#64748B",
-  tidak_jelas: "#475569",
+  netral: "#7A8AA6",
+  tidak_jelas: "#94A3B8",
 };
 export const CONTEXT_LABELS: Record<string, string> = {
   kandidat_berbahaya: "Kandidat berbahaya",

@@ -6,6 +6,7 @@ import { Logo } from "@/components/layout/Logo";
 import { Button } from "@/components/ui/button";
 import { Badge, ErrorBox, Input } from "@/components/ui/primitives";
 import { api, setToken } from "@/lib/api";
+import { ThemeToggle } from "@/lib/theme";
 
 type DemoAccount = { username: string; role: string; role_label: string };
 
@@ -36,7 +37,9 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="grid-bg flex min-h-screen items-center justify-center p-4">
+    <main className="grid-bg relative flex min-h-screen items-center justify-center p-4">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[3px] bg-brand" />
+      <ThemeToggle className="absolute right-4 top-4" />
       <div className="w-full max-w-md">
         <div className="mb-6 flex justify-center">
           <Logo height={96} className="rounded-xl px-3" />

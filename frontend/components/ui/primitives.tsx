@@ -24,7 +24,7 @@ export function Badge({ children, color, className, title }: { children: React.R
   return (
     <span
       title={title}
-      className={cn("inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-2xs font-medium leading-none ring-1 ring-inset", className)}
+      className={cn("tone inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-2xs font-medium leading-none ring-1 ring-inset", className)}
       style={color ? { color, backgroundColor: `${color}1A`, boxShadow: `inset 0 0 0 1px ${color}40` } : undefined}
     >
       {children}

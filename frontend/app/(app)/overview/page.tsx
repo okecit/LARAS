@@ -5,14 +5,16 @@ import { Page } from "@/components/layout/Page";
 import { Card, CardHeader, ErrorBox, Notice, PageHeader, Spinner, Stat } from "@/components/ui/primitives";
 import { CONTEXT_COLORS, CONTEXT_LABELS, EVIDENCE_COLORS, EVIDENCE_LABELS, fmtNum, PLATFORM_COLORS, PLATFORM_NAMES, VALIDATION_LABELS } from "@/lib/format";
 import { useApi, useApp } from "@/lib/store";
+import { useChartTheme } from "@/lib/theme";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const TT = { contentStyle: { background: "#0F172A", border: "1px solid #2A3A5C", fontSize: 11 } };
-const AX = { tick: { fill: "#64748B", fontSize: 10 } };
 
 export default function OverviewPage() {
   const { meta } = useApp();
   const { data, error, loading } = useApi<any>("/api/overview");
+  const ct = useChartTheme();
+  const TT = ct.tooltip;
+  const AX = { tick: ct.tick };
   const cats = meta?.categories || [];
 
   return (
@@ -37,7 +39,7 @@ export default function OverviewPage() {
               <div className="h-72 p-3">
                 <ResponsiveContainer>
                   <BarChart data={cats.map((c) => ({ code: c.code, ...(data.by_category_context[c.code] || {}) }))}>
-                    <CartesianGrid stroke="#1E2A44" vertical={false} />
+                    <CartesianGrid stroke={ct.grid} vertical={false} />
                     <XAxis dataKey="code" {...AX} />
                     <YAxis {...AX} />
                     <Tooltip {...TT} labelFormatter={(l) => `${l} — ${cats.find((c) => c.code === String(l))?.name ?? ""}`} />
@@ -72,7 +74,7 @@ export default function OverviewPage() {
               <div className="h-64 p-3">
                 <ResponsiveContainer>
                   <BarChart data={data.weekly}>
-                    <CartesianGrid stroke="#1E2A44" vertical={false} />
+                    <CartesianGrid stroke={ct.grid} vertical={false} />
                     <XAxis dataKey="week" {...AX} tickFormatter={(w: string) => w.slice(5)} />
                     <YAxis {...AX} />
                     <Tooltip {...TT} />
@@ -86,7 +88,7 @@ export default function OverviewPage() {
               <div className="space-y-2 p-4">
                 {Object.entries(data.by_platform as Record<string, number>).map(([p, n]) => (
                   <div key={p}>
-                    <div className="flex justify-between text-xs"><span style={{ color: PLATFORM_COLORS[p] }}>{PLATFORM_NAMES[p]}</span><span className="font-mono text-mute">{fmtNum(n)} konten</span></div>
+                    <div className="flex justify-between text-xs"><span className="tone" style={{ color: PLATFORM_COLORS[p] }}>{PLATFORM_NAMES[p]}</span><span className="font-mono text-mute">{fmtNum(n)} konten</span></div>
                     <div className="mt-1 flex h-2 overflow-hidden rounded-full bg-line">
                       {cats.map((c) => {
                         const v = data.by_platform_category[p]?.[c.code] || 0;
@@ -116,7 +118,7 @@ export default function OverviewPage() {
               <div className="space-y-2 p-4">
                 {Object.entries(EVIDENCE_LABELS).map(([k, l]) => (
                   <div key={k} className="flex items-center justify-between text-xs">
-                    <span style={{ color: EVIDENCE_COLORS[k] }}>{l}</span><span className="font-mono">{fmtNum(data.evidence_status[k] || 0)}</span>
+                    <span className="tone" style={{ color: EVIDENCE_COLORS[k] }}>{l}</span><span className="font-mono">{fmtNum(data.evidence_status[k] || 0)}</span>
                   </div>
                 ))}
               </div>

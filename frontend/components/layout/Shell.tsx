@@ -9,6 +9,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Badge, Dot, ErrorBox, Input, Spinner } from "@/components/ui/primitives";
 import { cn, PLATFORM_COLORS, PLATFORM_NAMES } from "@/lib/format";
 import { AppProvider, useApp } from "@/lib/store";
+import { ThemeToggle } from "@/lib/theme";
 import { Logo } from "./Logo";
 
 const NAV = [
@@ -68,7 +69,7 @@ function UserBox() {
   return (
     <div className="border-t border-line p-3">
       <div className="flex items-center gap-2">
-        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-teal to-purple text-2xs font-bold text-bg">
+        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand text-2xs font-bold text-white">
           {user.display_name.slice(0, 1)}
         </div>
         <div className="min-w-0 flex-1">
@@ -87,8 +88,9 @@ function TopBar() {
   const togglePlatform = (p: string) =>
     setFilters({ platforms: filters.platforms.includes(p) ? filters.platforms.filter((x) => x !== p) : [...filters.platforms, p] });
   return (
-    <header className="flex h-[60px] shrink-0 items-center gap-3 border-b border-line bg-panel/90 px-3 backdrop-blur">
-      <Link href="/" title="LARAs — beranda"><Logo height={40} /></Link>
+    <header className="relative flex h-[60px] shrink-0 items-center gap-3 border-b border-line bg-panel/90 px-3 backdrop-blur">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-brand opacity-80" />
+      <Link href="/" title="LARAs — beranda" className="shrink-0"><Logo height={40} /></Link>
       <div className="hidden min-w-0 flex-col xl:flex">
         <span className="truncate text-xs font-semibold text-ink" title={meta.project.name}>{meta.project.name}</span>
         <span className="font-mono text-2xs text-dim">{meta.project.code} · YOUTH-SNA</span>
@@ -124,7 +126,8 @@ function TopBar() {
         <Input placeholder="Cari pseudonim / kode konten…" className="pl-8" value={filters.search}
           onChange={(e) => setFilters({ search: e.target.value })} />
       </div>
-      <Badge color={meta.data_mode === "DEMO" ? "#FBBF24" : "#2DD4BF"} className="h-7 px-2 text-xs"
+      <ThemeToggle />
+      <Badge color={meta.data_mode === "DEMO" ? "#FBBF24" : "#1EC8E6"} className="h-7 px-2 text-xs"
         title={meta.data_mode === "DEMO" ? "Data sintetis — akun & konten fiktif" : "Data hasil pengumpulan resmi"}>
         <span className={cn("h-1.5 w-1.5 rounded-full", meta.data_mode === "DEMO" ? "bg-amber" : "animate-pulse bg-teal")} />
         {meta.data_mode}
@@ -151,7 +154,7 @@ function CategoryPicker() {
         className={cn("flex h-7 items-center gap-1.5 rounded-md border px-2 text-2xs", sel.length ? "border-purple/60 text-ink" : "border-line2 text-mute")}>
         Kategori
         {sel.length > 0 ? (
-          <span className="flex gap-0.5">{sel.map((c) => <Dot key={c} color={meta.categories.find((x) => x.code === c)?.color || "#fff"} size={7} />)}</span>
+          <span className="flex gap-0.5">{sel.map((c) => <Dot key={c} color={meta.categories.find((x) => x.code === c)?.color || "#94A3B8"} size={7} />)}</span>
         ) : <span className="text-dim">semua</span>}
         <ChevronDown className="h-3 w-3" />
       </button>

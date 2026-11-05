@@ -4,6 +4,7 @@ import cytoscape, { type Core, type ElementDefinition, type StylesheetJson } fro
 // @ts-expect-error - tanpa deklarasi tipe
 import fcose from "cytoscape-fcose";
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react";
+import { useTheme, type Palette } from "@/lib/theme";
 import { communityColor, CONTEXT_COLORS, EVIDENCE_COLORS, PLATFORM_COLORS } from "@/lib/format";
 import type { GEdge, GNode, MetricKey } from "@/lib/types";
 
@@ -53,6 +54,9 @@ export const CytoGraph = forwardRef<CytoHandle, Props>(function CytoGraph(
   onSelectRef.current = onSelect;
   const onDblRef = useRef(onNodeDoubleClick);
   onDblRef.current = onNodeDoubleClick;
+  const { palette } = useTheme();
+  const paletteRef = useRef(palette);
+  paletteRef.current = palette;
 
   const structureKey = useMemo(() => `${nodes.map((n) => n.id).join("|")}#${edges.length}`, [nodes, edges]);
 
@@ -76,46 +80,18 @@ export const CytoGraph = forwardRef<CytoHandle, Props>(function CytoGraph(
         data: {
           id: e.id, source: e.source, target: e.target, weight: e.weight,
           width: 0.6 + (e.weight / maxW) * 5,
-          color: e.evidence_status ? EVIDENCE_COLORS[e.evidence_status] : "#3B4B6E",
+          color: e.evidence_status ? EVIDENCE_COLORS[e.evidence_status] : palette.edge,
           sim: e.similarity_only ? 1 : 0,
         },
       });
     }
     return els;
-  }, [nodes, edges, sizeMetric, colorMode, categoryColors]);
+  }, [nodes, edges, sizeMetric, colorMode, categoryColors, palette]);
 
   // inisialisasi sekali
   useEffect(() => {
     if (!container.current) return;
-    const style: StylesheetJson = [
-      {
-        selector: "node",
-        style: {
-          width: "data(size)", height: "data(size)", "background-color": "data(color)", "background-opacity": 0.92,
-          "border-width": 1, "border-color": "#0B1220", label: "", color: "#CBD5E1", "font-size": 8,
-          "text-valign": "bottom", "text-margin-y": 3, "text-outline-color": "#0B1220", "text-outline-width": 2,
-          "transition-property": "opacity, border-width", "transition-duration": 150,
-        },
-      },
-      { selector: "node[kind = 'konten']", style: { shape: "round-rectangle" } },
-      { selector: "node[size > 26]", style: { label: "data(label)" } },
-      {
-        selector: "edge",
-        style: {
-          width: "data(width)", "line-color": "data(color)", "target-arrow-color": "data(color)", "target-arrow-shape": "triangle",
-          "arrow-scale": 0.7, "curve-style": "bezier", opacity: 0.55,
-        },
-      },
-      { selector: "edge[sim = 1]", style: { "line-style": "dashed", "line-dash-pattern": [4, 4], "target-arrow-shape": "none", opacity: 0.45 } },
-      { selector: ".faded", style: { opacity: 0.08 } },
-      { selector: "node.hl", style: { label: "data(label)", "border-width": 2, "border-color": "#E2E8F0", opacity: 1 } },
-      { selector: "edge.hl", style: { opacity: 0.95 } },
-      { selector: "node.match", style: { label: "data(label)", "border-width": 3, "border-color": "#FBBF24" } },
-      { selector: "node.path", style: { label: "data(label)", "border-width": 3, "border-color": "#22D3EE", opacity: 1 } },
-      { selector: "edge.path", style: { "line-color": "#22D3EE", "target-arrow-color": "#22D3EE", width: 4, opacity: 1 } },
-      { selector: "node:selected", style: { label: "data(label)", "border-width": 3, "border-color": "#2DD4BF", "font-size": 10, color: "#fff" } },
-      { selector: "edge:selected", style: { "line-color": "#2DD4BF", "target-arrow-color": "#2DD4BF", opacity: 1 } },
-    ];
+    const style = makeStyle(paletteRef.current);
     const cy = cytoscape({
       container: container.current, style, minZoom: 0.08, maxZoom: 5, wheelSensitivity: 0.25,
       boxSelectionEnabled: false, pixelRatio: "auto",
@@ -136,6 +112,11 @@ export const CytoGraph = forwardRef<CytoHandle, Props>(function CytoGraph(
       cyRef.current = null;
     };
   }, []);
+
+  // tema berubah → ganti stylesheet tanpa layout ulang
+  useEffect(() => {
+    cyRef.current?.style(makeStyle(palette));
+  }, [palette]);
 
   // struktur berubah → ganti elemen & layout ulang
   useEffect(() => {
@@ -192,7 +173,7 @@ export const CytoGraph = forwardRef<CytoHandle, Props>(function CytoGraph(
   }, [search, structureKey]);
 
   useImperativeHandle(ref, () => ({
-    png: () => cyRef.current?.png({ full: true, scale: 2, bg: "#0B1220" }) ?? null,
+    png: () => cyRef.current?.png({ full: true, scale: 2, bg: paletteRef.current.bg }) ?? null,
     fit: () => cyRef.current?.animate({ fit: { eles: cyRef.current.elements(), padding: 40 }, duration: 300 }),
     relayout: () => cyRef.current && runLayout(cyRef.current),
     focus: (id: string) => {
@@ -209,6 +190,38 @@ export const CytoGraph = forwardRef<CytoHandle, Props>(function CytoGraph(
 
   return <div ref={container} className="h-full w-full" />;
 });
+
+function makeStyle(p: Palette): StylesheetJson {
+return [
+    {
+      selector: "node",
+      style: {
+        width: "data(size)", height: "data(size)", "background-color": "data(color)", "background-opacity": 0.92,
+        "border-width": 1, "border-color": p.nodeBorder, label: "", color: p.label, "font-size": 8,
+        "text-valign": "bottom", "text-margin-y": 3, "text-outline-color": p.bg, "text-outline-width": 2,
+        "transition-property": "opacity, border-width", "transition-duration": 150,
+      },
+    },
+    { selector: "node[kind = 'konten']", style: { shape: "round-rectangle" } },
+    { selector: "node[size > 26]", style: { label: "data(label)" } },
+    {
+      selector: "edge",
+      style: {
+        width: "data(width)", "line-color": "data(color)", "target-arrow-color": "data(color)", "target-arrow-shape": "triangle",
+        "arrow-scale": 0.7, "curve-style": "bezier", opacity: 0.55,
+      },
+    },
+    { selector: "edge[sim = 1]", style: { "line-style": "dashed", "line-dash-pattern": [4, 4], "target-arrow-shape": "none", opacity: 0.45 } },
+    { selector: ".faded", style: { opacity: 0.08 } },
+    { selector: "node.hl", style: { label: "data(label)", "border-width": 2, "border-color": p.highlight, opacity: 1 } },
+    { selector: "edge.hl", style: { opacity: 0.95 } },
+    { selector: "node.match", style: { label: "data(label)", "border-width": 3, "border-color": "#FBBF24" } },
+    { selector: "node.path", style: { label: "data(label)", "border-width": 3, "border-color": "#22D3EE", opacity: 1 } },
+    { selector: "edge.path", style: { "line-color": "#22D3EE", "target-arrow-color": "#22D3EE", width: 4, opacity: 1 } },
+    { selector: "node:selected", style: { label: "data(label)", "border-width": 3, "border-color": p.accent, "font-size": 10, color: p.ink } },
+    { selector: "edge:selected", style: { "line-color": p.accent, "target-arrow-color": p.accent, opacity: 1 } },
+];
+}
 
 function runLayout(cy: Core) {
   const n = cy.nodes().length;

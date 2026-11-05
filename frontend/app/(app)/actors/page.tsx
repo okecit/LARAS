@@ -6,6 +6,7 @@ import { Page } from "@/components/layout/Page";
 import { Badge, Card, CardHeader, Dot, ErrorBox, Hint, Input, Notice, PageHeader, Select, Spinner } from "@/components/ui/primitives";
 import { qs } from "@/lib/api";
 import { ACCOUNT_LABELS, communityColor, CONTEXT_COLORS, CONTEXT_LABELS, fmtMetric, PLATFORM_COLORS, PLATFORM_NAMES } from "@/lib/format";
+import { useChartTheme } from "@/lib/theme";
 import { useApi, useApp, useFilterParams } from "@/lib/store";
 import type { MetricKey } from "@/lib/types";
 
@@ -15,6 +16,7 @@ const COLS: MetricKey[] = ["in_degree", "out_degree", "betweenness", "closeness"
 export default function ActorAnalytics() {
   const { meta } = useApp();
   const fp = useFilterParams();
+  const ct = useChartTheme();
   const { data, error, loading } = useApi<any>(`/api/actors${qs({ ...fp })}`);
   const [sort, setSort] = useState<string>("pseudonym");
   const [acct, setAcct] = useState("");
@@ -102,10 +104,10 @@ export default function ActorAnalytics() {
               <div className="h-48 p-2">
                 <ResponsiveContainer>
                   <BarChart data={histogram}>
-                    <CartesianGrid stroke="#1E2A44" vertical={false} />
-                    <XAxis dataKey="bin" tick={{ fill: "#64748B", fontSize: 9 }} />
-                    <YAxis tick={{ fill: "#64748B", fontSize: 10 }} allowDecimals={false} />
-                    <Tooltip contentStyle={{ background: "#0F172A", border: "1px solid #2A3A5C", fontSize: 11 }} />
+                    <CartesianGrid stroke={ct.grid} vertical={false} />
+                    <XAxis dataKey="bin" tick={{ ...ct.tick, fontSize: 9 }} />
+                    <YAxis tick={ct.tick} allowDecimals={false} />
+                    <Tooltip {...ct.tooltip} />
                     <Bar dataKey="n" name="Aktor" fill="#2DD4BF" radius={[3, 3, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
