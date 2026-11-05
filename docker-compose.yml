@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: laras
+      POSTGRES_USER: laras
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?setel POSTGRES_PASSWORD di .env}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U laras -d laras"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    env_file: .env
+    environment:
+      YSNA_DATABASE_URL: postgresql+psycopg://laras:${POSTGRES_PASSWORD}@db:5432/laras
+      YSNA_WORKER_MODE: external
+      YSNA_CORS_ORIGINS: http://localhost:3000
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    depends_on:
+      db: { condition: service_healthy }
+    ports: ["127.0.0.1:8000:8000"]
+
+  worker:
+    build: ./backend
+    env_file: .env
+    environment:
+      YSNA_DATABASE_URL: postgresql+psycopg://laras:${POSTGRES_PASSWORD}@db:5432/laras
+    command: python -m app.worker
+    depends_on: [api]
+
+  web:
+    build: ./frontend
+    environment:
+      YSNA_API_URL: http://api:8000
+    depends_on: [api]
+    ports: ["127.0.0.1:3000:3000"]
+
+volumes:
+  pgdata:

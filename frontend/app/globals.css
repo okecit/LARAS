@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: #0b1220;
+  color: #e2e8f0;
+  height: 100%;
+}
+
+body {
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a3a5c transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #2a3a5c;
+  border-radius: 8px;
+}
+
+.grid-bg {
+  background-color: #0b1220;
+  background-image: radial-gradient(rgba(148, 163, 184, 0.09) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.label-xs {
+  @apply text-2xs font-semibold uppercase tracking-[0.12em] text-dim;
+}
+
+input[type="range"] {
+  accent-color: #2dd4bf;
+}
+
+input[type="checkbox"] {
+  accent-color: #2dd4bf;
+}
+
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: #0f172a !important;
+  border: 1px solid #2a3a5c !important;
+  border-radius: 8px;
+  font-size: 12px;
+}
